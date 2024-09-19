@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MK_BracketManager", "MK_BracketManager\MK_BracketManager.csproj", "{CA9B9285-5FF9-44D1-BDE8-D5F3F6C48811}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{40B6C6D7-BFBA-4E1C-A44A-221A0F6E060B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA9B9285-5FF9-44D1-BDE8-D5F3F6C48811}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA9B9285-5FF9-44D1-BDE8-D5F3F6C48811}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA9B9285-5FF9-44D1-BDE8-D5F3F6C48811}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA9B9285-5FF9-44D1-BDE8-D5F3F6C48811}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {052006F7-3E43-4CAF-BE71-57DDB00120B6}
+	EndGlobalSection
+EndGlobal
