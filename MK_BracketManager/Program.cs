@@ -32,7 +32,7 @@ namespace MK_BracketManager
             //Collecting the number of contestants while making sure they are a number between 4 and 33
             Console.WriteLine("How many Contestants are there?");
             input = Console.ReadLine();
-            while(!int.TryParse(input, out int n) || int.Parse(input) < 5 || int.Parse(input) > 32)
+            while(!int.TryParse(input, out int n) || int.Parse(input) < 4 || int.Parse(input) > 32)
             {
                 Console.WriteLine("Wrong input. Please enter a number between 4 and 33");
                 input = Console.ReadLine() ;
