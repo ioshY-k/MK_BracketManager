@@ -64,7 +64,7 @@ namespace MK_BracketManager
             input = Console.ReadLine();
             while(!input.Equals("d") && !input.Equals("e"))
             {
-                Console.WriteLine("Wrong input. Please enter 'd' or 'e'");
+                Console.WriteLine("Wrong input. Please Enter 'd' or 'e'");
                 input = Console.ReadLine();
             }
             if (input.Equals("e"))
@@ -82,7 +82,7 @@ namespace MK_BracketManager
             }
 
 
-            //Collecting courses for the custom courseList depending on whether a custom course list is desired
+            //Collecting courses for the custom courselist depending on wether a custom course list is desired
             Console.WriteLine("---------------------------------------------------------\n");
             Console.WriteLine("Do You want to enter a custom course selection or run the tournament with the default selection?\nThe default selection is:");
             //Printing the corresponding default course Lists for 8- 16- or 32 participant tournaments
