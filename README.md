@@ -11,7 +11,13 @@ This application serves as a simple manager for running a Mario Kart tournament 
 
 ## Installation
 
+### Windows
+
 To install the bracket manager, just download the MK_BracketManager.exe file found in the MK_Bracketmanager directory
+
+### Unix
+
+Install [Mono](https://www.mono-project.com/). Download the MK_BracketManager.exe file found in the MK_Bracketmanager directory. Run it with `mono MK_BracketManager.exe`
 
 ## Tournament setup
 
