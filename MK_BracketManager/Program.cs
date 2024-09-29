@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.Eventing.Reader;
@@ -20,7 +21,7 @@ namespace MK_BracketManager
             String[] courseListMax8Semifinals = { "Luigis Piste", "Peach Beach", "Staubtrockene Wüste", "Marios Piste", "Daisy Dampfer" };
             String[] courseListMax8Finals = { "Yoshis Piste", "DK Bergland", "Dinodino-Dschungel", "Bowsers Festung", "Regenbogen-Boulevard" };
             String[] courseListMax16Quarterfinals = { "Luigis Piste", "Peach Beach" };
-            String[] courseListMax16Semifinals = { "taubtrockene Wüste", "Marios Piste", "Daisy Dampfer", "Waluigi Arena", "Sorbet-Land" };
+            String[] courseListMax16Semifinals = { "Staubtrockene Wüste", "Marios Piste", "Daisy Dampfer", "Waluigi Arena", "Sorbet-Land" };
             String[] courseListMax16Finals = { "Yoshis Piste", "DK Bergland", "Dinodino-Dschungel", "Bowsers Festung", "Regenbogen-Boulevard" };
             String[] courseListMax32Octalfinals = { "Luigis Piste" };
             String[] courseListMax32Quarterfinals = { "Peach Beach", "Staubtrockene Wüste" };
@@ -29,25 +30,25 @@ namespace MK_BracketManager
             Tournament tournament;
 
 
-            //Collecting the number of contestants while making sure they are a number between 4 and 33
-            Console.WriteLine("How many Contestants are there?");
+            //Collecting the number of contestants while making sure they are a number between 4 and 32
+            Console.WriteLine("How many contestants are there?");
             input = Console.ReadLine();
-            while(!int.TryParse(input, out int n) || int.Parse(input) < 5 || int.Parse(input) > 32)
+            while(!int.TryParse(input, out int n) || int.Parse(input) < 4 || int.Parse(input) > 32)
             {
-                Console.WriteLine("Wrong input. Please enter a number between 4 and 33");
+                Console.WriteLine("Wrong input. Please enter a number between 4 and 32");
                 input = Console.ReadLine() ;
             }
             numbContestants = int.Parse(input);
 
 
-            //Collecting the names of every Contestant
+            //Collecting the names of every contestant
             String[] contestants = new String[numbContestants];
             input = "r";
             while (input.Equals("r"))
             {
                 for (int i = 0; i < contestants.Length; i++)
                 {
-                    Console.WriteLine("Type in the name for Contestant {0}:", i);
+                    Console.WriteLine("Type in the name for contestant {0}:", i);
                     contestants[i] = Console.ReadLine();
                 }
                 Console.WriteLine("The {0} contestants are: {1}", numbContestants, String.Join(", ", contestants));
@@ -56,7 +57,7 @@ namespace MK_BracketManager
             }
 
 
-            //Setting up the default Course lists depending on wether it is a MK8 or MKDD tournament
+            //Setting up the default course lists depending on whether it is a MK8 or MKDD tournament
             Console.WriteLine("---------------------------------------------------------\n");
             Console.WriteLine("Is this Mario Kart Double Dash or Mario Kart 8?");
             Console.WriteLine("-d Mario Kart Double Dash");
@@ -107,10 +108,10 @@ namespace MK_BracketManager
             input = Console.ReadLine();
             while(!input.Equals("c") && !input.Equals("d"))
             {
-                Console.WriteLine("Wrong input. Please Enter 'c' or 'd'");
+                Console.WriteLine("Wrong input. Please enter 'c' or 'd'");
                 input = Console.ReadLine();
             }
-            //Mapping the course Lists to the corresponding userinputs
+            //Mapping the course Lists to the corresponding user inputs
             if (input.Equals("c"))
             {
                 //Differentiating between 8-, 16-, and 32 Participant tournaments, because they have different corresponding Arrays
@@ -286,7 +287,7 @@ namespace MK_BracketManager
             for(int i = 0; i < courseListMax32Semifinals.Length; i++) { semiFinalPlaceHolder[i] = courseListMax32Semifinals[i]; }
 
 
-            //Creating the tournament as a 8-, 16-, or 32 Participant tournament depending on the number of contestants
+            //Creating the tournament as an 8-, 16-, or 32 Participant tournament depending on the number of contestants
             if      (numbContestants <= 8)                          { tournament = new Tournament(isDoubleDash, contestants, octalFinalPlaceHolder, quarterFinalPlaceHolder, courseListMax8Semifinals, courseListMax8Finals); }
             else if (numbContestants > 8 && numbContestants <= 16)  { tournament = new Tournament(isDoubleDash, contestants, octalFinalPlaceHolder, courseListMax16Quarterfinals, courseListMax8Finals, courseListMax16Finals); }
             else                                                    { tournament = new Tournament(isDoubleDash, contestants, courseListMax32Octalfinals, courseListMax32Quarterfinals, semiFinalPlaceHolder, courseListMax32Finals); }
@@ -294,7 +295,7 @@ namespace MK_BracketManager
 
             //Printing a visualization of the configuration
             Console.WriteLine("---------------------------------------------------------\n");
-            Console.WriteLine("The Tournament is configured as follows:\n");
+            Console.WriteLine("The tournament is configured as follows:\n");
             Console.WriteLine("Contestants: {0}\n", String.Join(", ", contestants));
             if (isDoubleDash)   { Console.WriteLine("Game: Mario Kart DoubleDash\n"); }
             else                { Console.WriteLine("Game: Mario Kart 8\n"         ); }
@@ -309,7 +310,7 @@ namespace MK_BracketManager
             //Main menu with the options 'showing all games', 'showing the games that can be played next' and 'updating the score of a played game'
             while(true)
             {
-                Console.WriteLine("-n Show the games that are up next \n-b Show the whole Bracket \n-u Update the score on a game");
+                Console.WriteLine("-n Show the games that are up next \n-b Show the whole bracket \n-f Show a fancy bracket \n-u Update the score on a game");
                 input = Console.ReadLine();
                 Console.WriteLine("---------------------------------------------------------\n");
                 //Listing up the games, that can be played next, because the participants are decided already
@@ -326,13 +327,18 @@ namespace MK_BracketManager
                 {
                     Console.WriteLine(tournament.Visualize());
                 }
-                //Letting the user register the results of a game that has been able to be played already
+                //Show fancy bracket
+                else if (input.Equals("f"))
+                {
+                    Console.WriteLine(tournament.FancyBracket());
+                }
+                //Letting the user register the results of a game that has been played already
                 else if (input.Equals("u"))
                 {
                     int id = 0;
                     bool correctGame = false;
                     Console.WriteLine("Which game do you want to update?");
-                    //Listing up every upcoming game with the corresponding input (ID number) that the user has to Enter to select the game
+                    //Listing up every upcoming game with the corresponding input (ID number) that the user has to enter to select the game
                     foreach (MKGame game in tournament.GetUpcomingGames())
                     {
                         Console.WriteLine("-{0}\n{1} \n", game.GetGameID(), game.IntoString());
@@ -340,16 +346,16 @@ namespace MK_BracketManager
                     while (!correctGame)
                     {
                         input = Console.ReadLine();
-                        //Checking wether the input is a number at all
+                        //Checking whether the input is a number at all
                         while(!int.TryParse(input, out int n))
                         {
                             Console.WriteLine("Wrong input. Please enter one of the IDs listed above, or enter 0 to cancel");
                             input = Console.ReadLine();
                         }
                         id = Convert.ToInt32(input);
-                        //Checking wether it is the number 0. In that case no game will be updated and the user is directed back to the main menu
+                        //Checking whether it is the number 0. In that case no game will be updated and the user is directed back to the main menu
                         if (id == 0) { break; }
-                        //Checking wether the input is one of the IDs of the possible games
+                        //Checking whether the input is one of the IDs of the possible games
                         foreach (MKGame game in tournament.GetUpcomingGames())
                         {
                             if (game.GetGameID() == id)
@@ -359,11 +365,11 @@ namespace MK_BracketManager
                         }
                         if(!correctGame)
                         {
-                            Console.WriteLine("This Game ID wasn't listet above. Enter a valid Game ID, or enter 0 to cancel");
+                            Console.WriteLine("This game ID wasn't listed above. Enter a valid game ID, or enter 0 to cancel");
                         }
                     }
                     //ID now is either a legit game ID or 0
-                    //0 means no changes an any other ID updates the corresponding game and the follow up games that get influenced by it
+                    //0 means no changes an any other ID updates the corresponding game and the follow-up games that get influenced by it
                     if(id != 0)
                     {
                         tournament.GetGame(id).UpdateScore();
@@ -490,7 +496,7 @@ namespace MK_BracketManager
             MKGame semi2;
             MKGame finale;
 
-            //Player number per game is dependend on the number of contestants and the game that is played
+            //Player number per game is dependent on the number of contestants and the game that is played
             int contsIn1  = HowManyPlayers(tournamentConts.Length,  1);
             int contsIn2  = HowManyPlayers(tournamentConts.Length,  2);
             int contsIn3  = HowManyPlayers(tournamentConts.Length,  3);
@@ -524,8 +530,8 @@ namespace MK_BracketManager
             int[] semi2Results    = new int[contsIn14];
             int[] finalResults    = new int[contsIn15];
 
-            //Initializing Lists containing the player names for every Round played in Octalfinals.
-            //Relevant only for 32- player tournaments, because with less participants no octal finals are initialized
+            //Initializing Lists containing the player names for every Round played in octal-finals.
+            //Relevant only for 32- player tournaments, because with fewer participants no octal finals are initialized
             List<string> contsListIn1 = new List<string>();
             for (int i = 0; i < contsIn1; i++) { contsListIn1.Add(tournamentConts[i]); }
             List<string> contsListIn2 = new List<string>();
@@ -563,7 +569,7 @@ namespace MK_BracketManager
 
             //Versions of the player names where the contesting players are not yet decided
             //Here every player gets named after the game that has to be won to participate in the current one
-            //(eg: "game 9:2nd" -> second place of the first semi finals game (gameID 9) will participate here)
+            //(eg: "game 9:2nd" -> second place of the first semifinals game (gameID 9) will participate here)
             List<string> contsListIn9Undef  = new List<string>();
             contsListIn9Undef.Add("game 1:1st");
             contsListIn9Undef.Add("game 3:1st");
@@ -606,7 +612,7 @@ namespace MK_BracketManager
             if (contsIn13 > 2) { contsListIn15Undef.Add("game 13:2nd"); }
             if (contsIn14 > 2) { contsListIn15Undef.Add("game 14:2nd"); }
 
-            //Initializing the corresponding games with all the above configurated attrributes
+            //Initializing the corresponding games with all the above configured attributes
             switch (tournamentConts.Length)
             {
                 case int n when n <= 8:
@@ -654,10 +660,10 @@ namespace MK_BracketManager
             return games;
         }
 
-        //computes how many players will compete in one game (Which is only dependend of the number of Contestants and which one of the 15 games is played)
+        //computes how many players will compete in one game (Which is only dependent of the number of contestants and which one of the 15 games is played)
         public int HowManyPlayers(int numberContestants, int gameID) 
         {
-            //"impossible rounds" (rounds that dont get created bc the number of players is too low) return 0
+            //"impossible rounds" (rounds that don't get created bc the number of players is too low) return 0
             if (  (numberContestants <= 16 && gameID <= 8 )      
                 ||(numberContestants <=  8 && gameID <= 12) )
             {
@@ -669,7 +675,7 @@ namespace MK_BracketManager
 
             //Three termination conditions for the recursive function calls
             //Termination conditions are calls, that execute the function for a game that is in the first round
-            //(32 player tournaments -> octalfinal games, 16 player tournaments -> quarterfinal games, 8 player tournaments -> semifinal games)
+            //(32 player tournaments -> octal-final games, 16 player tournaments -> quarterfinal games, 8 player tournaments -> semifinal games)
             if(gameID <= 8 && numberContestants > 16)
             {
                 mod = numberContestants % 8;
@@ -700,8 +706,8 @@ namespace MK_BracketManager
 
             //Otherwise a recursive function call is executed
             //with n being initialized at 2 and bumping up 0, 1 or 2 times depending on the number of players in the previous rounds, n will be always 2, 3 or 4.
-            //The two bumps only accure, if rounds whos second places would participate in the current game have more than 2 participants.
-            //Thats because otherwise only the first place continues on and the spot for the current game stays free
+            //The two bumps only occur, if rounds whose second places would participate in the current game have more than 2 participants.
+            //That's because otherwise only the first place continues on and the spot for the current game stays free
             switch(gameID)
             {
                 case 15:
@@ -730,7 +736,7 @@ namespace MK_BracketManager
             return n;
         }
 
-        //Updates the follow up games that are influenced by the updated score of the current game
+        //Updates the follow-up games that are influenced by the updated score of the current game
         public void SetFollowupGames(int id)
         {
             string idString = id.ToString();
@@ -738,7 +744,7 @@ namespace MK_BracketManager
             string secondPlace = "no Player found";
             bool allContsAreDecided = true;
 
-            //Find the corresponding player names for the first and second place of the current game, because these names might appear in follow up games
+            //Find the corresponding player names for the first and second place of the current game, because these names might appear in follow-up games
             for(int i = 0; i < GetGame(id).GetResults().Length; i++)
             {
                 if (GetGame(id).GetResults()[i] == 1)
@@ -752,7 +758,7 @@ namespace MK_BracketManager
             }
 
             //Replacing the corresponding undefined namespaces with the names of the first and second placed players,
-            //while simultaniously checking, if the updated name made all namespaces of this game defined,
+            //while simultaneously checking, if the updated name made all namespaces of this game defined,
             //because this would make that game playable and therefore appear in the selection of next up games
             for(int i = 0; i < GetGames().Length; i++)
             {
@@ -790,6 +796,116 @@ namespace MK_BracketManager
             }
             return bracket;
         }
+
+        //Returns the string for a fancy bracket
+        public String FancyBracket()
+        {
+            int bracketLeaves = 2;
+            if (tournamentConts.Length > 8) bracketLeaves = 4;
+            if (tournamentConts.Length > 16) bracketLeaves = 8;
+            //This could've been solved using math, but this implementation is simpler
+            
+            //this variable ensures that the games have the correct offset from the start of the bracket
+            int maxMapsInRace = 0;
+            foreach (MKGame game in games)
+            {
+                if (game.gameCourses.Length > maxMapsInRace) maxMapsInRace = game.gameCourses.Length;
+            }
+
+            ArrayList bracket = new ArrayList();
+            while (bracket.Count < bracketLeaves + maxMapsInRace + 1)
+            {
+                bracket.Add("");
+            }
+            
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(1, 8), maxMapsInRace, GetContsInGameIdRange(1, 8), bracket);
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(9, 12), maxMapsInRace, GetContsInGameIdRange(9, 12), bracket);
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(13, 14), maxMapsInRace, GetContsInGameIdRange(13, 14), bracket);
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(15, 15), maxMapsInRace, GetContsInGameIdRange(15, 15), bracket);
+
+            if (bracket.Count == 0)
+            {
+                Console.WriteLine("Bracket appears to be empty");
+            }
+            return String.Join("\n", (string[])bracket.ToArray(typeof(string)))+"\n";
+        }
+
+        //Get a List of Strings with the Syntax of "game1cont1 vs game1cont2 ...".
+        //The Strings are all the same length.
+        private ArrayList GetContsInGameIdRange(int rangeMin, int rangeMax)
+        {
+            ArrayList raceList = new ArrayList();
+            int maxStringLen = 0;
+            foreach (MKGame game in games)
+            {
+                if (game.GetGameID() >= rangeMin && game.GetGameID() <= rangeMax)
+                {
+                    String race = game.GetGameID().ToString().PadLeft(2) + ": " + String.Join(" vs ", game.GetGameConts());
+                    if (race.Length > maxStringLen) maxStringLen = race.Length;
+                    raceList.Add(race);
+                }
+            }
+            return NormalizeLength(raceList);
+        }
+
+        //Returns the list of maps in the game ID range, assuming every game uses the same maps
+        private ArrayList GetMapsInGameIdRange(int rangeMin, int rangeMax)
+        {
+            ArrayList mapList = new ArrayList();
+            foreach (MKGame game in games)
+            {
+                if (game.GetGameID() >= rangeMin && game.GetGameID() <= rangeMax && mapList.Count == 0)
+                {
+                    foreach (string map in game.gameCourses)
+                    {
+                        mapList.Add(map);
+                    }
+                }
+            }
+            return NormalizeLength(mapList);
+        }
+        
+        //Used for rendering the bracket
+        private void AddMapsAndRacesToBracket(ArrayList maps, int maxMapsInRace, ArrayList races, ArrayList bracket)
+        {
+            if (races.Count != 0)
+            {
+                for (int i = 0; i < maps.Count; i++)
+                {
+                    bracket[i] = (string)bracket[i] + maps[i];
+                }
+                for (int i = 0; i < races.Count; i++)
+                {
+                    bracket[i+maxMapsInRace+1] = (string)bracket[i+maxMapsInRace+1] + races[i];
+                }
+                bracket = NormalizeLength(bracket);
+                if (races.Count != 1)
+                {
+                    for (int i = 0; i < bracket.Count; i++)
+                    {
+                        bracket[i] = bracket[i] + " \u2502 "; // │
+                    }
+                }
+            }
+        }
+
+        //Adds padding at the end of every string so they're all the same length
+        private ArrayList NormalizeLength(ArrayList arr, int length= -1 , char filler = ' ')
+        {
+            //find length if none is given
+            if (length == -1)
+            {
+                foreach (String str in arr)
+                {
+                    if (str != null && str.Length > length) length = str.Length;
+                }
+            }
+            for (int i = 0; i < arr.Count; i++)
+            {
+                if (arr[i] != null)arr[i] = ((string)arr[i]).PadRight(length, filler);
+            }
+            return arr;
+        }
     }
 
     public class MKGame
@@ -799,7 +915,7 @@ namespace MK_BracketManager
         private bool isSettled;
         private int[] results;
         private List<String> gameConts;
-        private String[] gameCourses;
+        public String[] gameCourses;
 
         public MKGame(int ID, bool pK, bool isS, int[] r, List<String> gConts, String[] gCourse)
         {
@@ -903,11 +1019,11 @@ namespace MK_BracketManager
                 }
                 if(bumper1 > 1 || bumper2 > 1 || bumper3 > 1 || bumper4 > 1) { isValid = false; }
 
-                //Visualizing the configurated placements, if they are legit
+                //Visualizing the configured placements, if they are legit
                 if(isValid)
                 {
                     Console.WriteLine("---------------------------------------------------------\n");
-                    Console.WriteLine("The Placement is as follows:");
+                    Console.WriteLine("The placement is as follows:");
                     for (int i = 0; i < gameConts.Count; i++)
                     {
                         Console.WriteLine("{0}: {1}", gameConts[i], results[i]);
