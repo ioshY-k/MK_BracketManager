@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.Eventing.Reader;
@@ -309,7 +310,7 @@ namespace MK_BracketManager
             //Main menu with the options 'showing all games', 'showing the games that can be played next' and 'updating the score of a played game'
             while(true)
             {
-                Console.WriteLine("-n Show the games that are up next \n-b Show the whole bracket \n-u Update the score on a game");
+                Console.WriteLine("-n Show the games that are up next \n-b Show the whole bracket \n-f Show a fancy bracket \n-u Update the score on a game");
                 input = Console.ReadLine();
                 Console.WriteLine("---------------------------------------------------------\n");
                 //Listing up the games, that can be played next, because the participants are decided already
@@ -325,6 +326,11 @@ namespace MK_BracketManager
                 else if (input.Equals("b"))
                 {
                     Console.WriteLine(tournament.Visualize());
+                }
+                //Show fancy bracket
+                else if (input.Equals("f"))
+                {
+                    Console.WriteLine(tournament.FancyBracket());
                 }
                 //Letting the user register the results of a game that has been played already
                 else if (input.Equals("u"))
@@ -790,6 +796,116 @@ namespace MK_BracketManager
             }
             return bracket;
         }
+
+        //Returns the string for a fancy bracket
+        public String FancyBracket()
+        {
+            int bracketLeaves = 2;
+            if (tournamentConts.Length > 8) bracketLeaves = 4;
+            if (tournamentConts.Length > 16) bracketLeaves = 8;
+            //This could've been solved using math, but this implementation is simpler
+            
+            //this variable ensures that the games have the correct offset from the start of the bracket
+            int maxMapsInRace = 0;
+            foreach (MKGame game in games)
+            {
+                if (game.gameCourses.Length > maxMapsInRace) maxMapsInRace = game.gameCourses.Length;
+            }
+
+            ArrayList bracket = new ArrayList();
+            while (bracket.Count < bracketLeaves + maxMapsInRace + 1)
+            {
+                bracket.Add("");
+            }
+            
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(1, 8), maxMapsInRace, GetContsInGameIdRange(1, 8), bracket);
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(9, 12), maxMapsInRace, GetContsInGameIdRange(9, 12), bracket);
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(13, 14), maxMapsInRace, GetContsInGameIdRange(13, 14), bracket);
+            AddMapsAndRacesToBracket(GetMapsInGameIdRange(15, 15), maxMapsInRace, GetContsInGameIdRange(15, 15), bracket);
+
+            if (bracket.Count == 0)
+            {
+                Console.WriteLine("Bracket appears to be empty");
+            }
+            return String.Join("\n", (string[])bracket.ToArray(typeof(string)))+"\n";
+        }
+
+        //Get a List of Strings with the Syntax of "game1cont1 vs game1cont2 ...".
+        //The Strings are all the same length.
+        private ArrayList GetContsInGameIdRange(int rangeMin, int rangeMax)
+        {
+            ArrayList raceList = new ArrayList();
+            int maxStringLen = 0;
+            foreach (MKGame game in games)
+            {
+                if (game.GetGameID() >= rangeMin && game.GetGameID() <= rangeMax)
+                {
+                    String race = game.GetGameID().ToString().PadLeft(2) + ": " + String.Join(" vs ", game.GetGameConts());
+                    if (race.Length > maxStringLen) maxStringLen = race.Length;
+                    raceList.Add(race);
+                }
+            }
+            return NormalizeLength(raceList);
+        }
+
+        //Returns the list of maps in the game ID range, assuming every game uses the same maps
+        private ArrayList GetMapsInGameIdRange(int rangeMin, int rangeMax)
+        {
+            ArrayList mapList = new ArrayList();
+            foreach (MKGame game in games)
+            {
+                if (game.GetGameID() >= rangeMin && game.GetGameID() <= rangeMax && mapList.Count == 0)
+                {
+                    foreach (string map in game.gameCourses)
+                    {
+                        mapList.Add(map);
+                    }
+                }
+            }
+            return NormalizeLength(mapList);
+        }
+        
+        //Used for rendering the bracket
+        private void AddMapsAndRacesToBracket(ArrayList maps, int maxMapsInRace, ArrayList races, ArrayList bracket)
+        {
+            if (races.Count != 0)
+            {
+                for (int i = 0; i < maps.Count; i++)
+                {
+                    bracket[i] = (string)bracket[i] + maps[i];
+                }
+                for (int i = 0; i < races.Count; i++)
+                {
+                    bracket[i+maxMapsInRace+1] = (string)bracket[i+maxMapsInRace+1] + races[i];
+                }
+                bracket = NormalizeLength(bracket);
+                if (races.Count != 1)
+                {
+                    for (int i = 0; i < bracket.Count; i++)
+                    {
+                        bracket[i] = bracket[i] + " \u2502 "; // │
+                    }
+                }
+            }
+        }
+
+        //Adds padding at the end of every string so they're all the same length
+        private ArrayList NormalizeLength(ArrayList arr, int length= -1 , char filler = ' ')
+        {
+            //find length if none is given
+            if (length == -1)
+            {
+                foreach (String str in arr)
+                {
+                    if (str != null && str.Length > length) length = str.Length;
+                }
+            }
+            for (int i = 0; i < arr.Count; i++)
+            {
+                if (arr[i] != null)arr[i] = ((string)arr[i]).PadRight(length, filler);
+            }
+            return arr;
+        }
     }
 
     public class MKGame
@@ -799,7 +915,7 @@ namespace MK_BracketManager
         private bool isSettled;
         private int[] results;
         private List<String> gameConts;
-        private String[] gameCourses;
+        public String[] gameCourses;
 
         public MKGame(int ID, bool pK, bool isS, int[] r, List<String> gConts, String[] gCourse)
         {
