@@ -1,3 +1,22 @@
+### Mario Kart Bracket Manager
+
+This application serves as a simple manager for running a Mario Kart tournament bracket. features include:
+
+- Tournaments for 8 to 32 contestants
+- Automated Track selection for MKDD and MK8
+- Option to use custom Track selection (therefore suitable for all kinds of racing games)
+- Automated distribution of contestants from octalfinals to finals
+- Automated adaption for number of races, allowing for tournaments of equal length (ca 1:30h) at every playercount
+- Overview of upcoming races and current bracket at all times
+
+## Installation
+
+To install the bracket manager, just download the MK_BracketManager.exe file found in the MK_Bracketmanager directory
+
+## Tournament setup
+
+When opening the file, you will be asked several questions like contestant numbers, -names, track selection etc. These are self explainatory for the most. Just know that when selecting the game (MKDD or MK8) it only affects the offered default track selection. if you play with a custom selection or a non-Mario Kart racer, this choice doesn't matter. Also the number of tracks can not be altered, since the tournament always aims at 1:30h length and adapts it to the number of contestants,
+
 ## Games
 
 The main menu starts up with a summary of the chosen tournament settings followed by a depiction of every upcoming game. A game will look as follows:
